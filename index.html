@@ -1,6 +1,91 @@
-<div id="snake-wrap" style="max-width:480px;margin:0 auto;">
+<!-- <div id="snake-wrap" style="max-width:480px;margin:0 auto;">
     <canvas id="snake" width="480" height="640" style="display:block;width:100%;height:auto;border:1px solid #eee;border-radius:12px"></canvas>
     <div id="hud" style="text-align:center;margin-top:8px;font:14px/1.4 system-ui">Очки: <span id="score">0</span></div>
     <script src="./script.js"></script>
   </div>
-  
+   -->
+   <!DOCTYPE html>
+   <html lang="ru">
+   <head>
+   <meta charset="UTF-8">
+   <title>Расчёт вероятности реализации угроз</title>
+   <style>
+       body { font-family: Arial, sans-serif; margin: 40px; background: #f6f8fa; }
+       h1 { text-align: center; }
+       .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+       label { display: block; margin-top: 10px; }
+       input { width: 100%; padding: 5px; margin-top: 5px; }
+       button { margin-top: 20px; width: 100%; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+       button:hover { background: #0056b3; }
+       .result { margin-top: 20px; font-size: 18px; font-weight: bold; text-align: center; }
+   </style>
+   </head>
+   <body>
+   <div class="container">
+       <h1>Расчёт вероятности угрозы</h1>
+   
+       <label>k — количество угроз:</label>
+       <input type="number" id="k" min="1" value="2">
+   
+       <label>n — количество нарушителей:</label>
+       <input type="number" id="n" min="1" value="2">
+   
+       <label>Pi (через запятую):</label>
+       <input type="text" id="Pi" placeholder="например: 0.3, 0.7">
+   
+       <label>p(j/i) я хз что это (в виде матрицы, строки через ";" а значения через ","):</label>
+       <input type="text" id="pji" placeholder="например: 0.5,0.5; 0.4,0.6">
+   
+       <label>q<sub>н1</sub> — вероятность несрабатывания средств обнаружения:</label>
+       <input type="number" id="q1" step="0.01" value="0.2">
+   
+       <label>q<sub>н2</sub> — вероятность несрабатывания средств отражения:</label>
+       <input type="number" id="q2" step="0.01" value="0.3">
+   
+       <label>a — скорость реализации угрозы:</label>
+       <input type="number" id="a" step="0.01" value="0.5">
+   
+       <label>t<sub>от</sub> — время, которым располагает субъект угрозы:</label>
+       <input type="number" id="t" step="0.01" value="2">
+   
+       <button onclick="calculate()">Рассчитать</button>
+   
+       <div class="result" id="result"></div>
+   </div>
+   
+   <script>
+   function calculate() {
+   //тут присвоим (parseInt переобразовывает в int)
+       const k = parseInt(document.getElementById('k').value);
+       const n = parseInt(document.getElementById('n').value);
+       // это в массив переобразовывает
+       const Pi = document.getElementById('Pi').value.split(',').map(Number);
+       const q1 = parseFloat(document.getElementById('q1').value);
+       const q2 = parseFloat(document.getElementById('q2').value);
+       const a = parseFloat(document.getElementById('a').value);
+       const t = parseFloat(document.getElementById('t').value);
+   
+       // сначало по ";" потом по ","
+       const pjiRows = document.getElementById('pji').value.split(';');
+       const pji = pjiRows.map(row => row.split(',').map(Number));
+   
+       let P = 0;
+   
+       // я даже не буду пытаться разобраться
+       for (let j = 0; j < k; j++) {
+           for (let i = 0; i < n; i++) {
+               const Pi_val = Pi[i] || 0;
+               const pji_val = (pji[i] && pji[i][j]) ? pji[i][j] : 0;
+               const expPart = 1 - Math.exp(-a * t);
+               const inner = q2 + expPart * (1 - q2);
+               const term = Pi_val * pji_val * q1 * inner * (1 - q2);
+               P += term;
+           }
+       }
+   //округляем до 6 знаков
+       document.getElementById('result').innerText = `Результат P = ${P.toFixed(6)}`;
+   }
+   </script>
+   </body>
+   </html>
+   
