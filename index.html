@@ -33,7 +33,7 @@
        <label>Pi (через запятую):</label>
        <input type="text" id="Pi" placeholder="например: 0.3, 0.7">
    
-       <label>p(j/i) я хз что это (в виде матрицы, строки через ";" а значения через ","):</label>
+       <label>p(j/i)(в виде матрицы, строки через ";" а значения через ","):</label>
        <input type="text" id="pji" placeholder="например: 0.5,0.5; 0.4,0.6">
    
        <label>q<sub>н1</sub> — вероятность несрабатывания средств обнаружения:</label>
@@ -45,7 +45,7 @@
        <label>a — скорость реализации угрозы:</label>
        <input type="number" id="a" step="0.01" value="0.5">
    
-       <label>t<sub>от</sub> — время, которым располагает субъект угрозы:</label>
+       <label>t — время, которым располагает субъект угрозы:</label>
        <input type="number" id="t" step="0.01" value="2">
    
        <button onclick="calculate()">Рассчитать</button>
@@ -71,7 +71,7 @@
    
        let P = 0;
    
-       // я даже не буду пытаться разобраться
+      
        for (let j = 0; j < k; j++) {
            for (let i = 0; i < n; i++) {
                const Pi_val = Pi[i] || 0;
